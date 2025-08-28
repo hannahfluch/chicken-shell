@@ -45,6 +45,8 @@ Variants {
                 anchors.leftMargin: Style.marginS * scaling
                 anchors.verticalCenter: parent.verticalCenter
                 spacing: Style.marginS * scaling
+
+                SystemMonitor {}
             }
 
             // Center
@@ -56,9 +58,6 @@ Variants {
                 anchors.verticalCenter: parent.verticalCenter
                 spacing: Style.marginS * scaling
 
-                Clock {
-                    anchors.verticalCenter: parent.verticalCenter
-                }
             }
 
             // Right
@@ -86,6 +85,9 @@ Variants {
                 }
 
                 Battery {
+                    anchors.verticalCenter: parent.verticalCenter
+                }
+                Clock {
                     anchors.verticalCenter: parent.verticalCenter
                 }
             }
