@@ -26,6 +26,7 @@ Rectangle {
     signal entered
     signal exited
     signal clicked
+    signal wheel(int delta)
 
     implicitWidth: size
     implicitHeight: size
@@ -78,6 +79,9 @@ Rectangle {
                 tooltip.hide();
             }
             root.clicked();
+        }
+        onWheel: wheel => {
+            root.wheel(wheel.angleDelta.y);
         }
     }
 }

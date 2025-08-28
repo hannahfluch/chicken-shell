@@ -70,7 +70,7 @@ Singleton {
             property var monitorsScaling: {}
 
             // brightness
-            property JsonObject brightness
+            property int brightnessStep: 5
 
             // notifications
             property JsonObject notifications

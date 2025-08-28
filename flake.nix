@@ -46,6 +46,7 @@
             matugen
             networkmanager
             wl-clipboard
+            systemdMinimal
           ];
 
           fontconfig = pkgs.makeFontsConf {

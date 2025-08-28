@@ -81,6 +81,10 @@ Variants {
                     anchors.verticalCenter: parent.verticalCenter
                 }
 
+                Brightness {
+                    anchors.verticalCenter: parent.verticalCenter
+                }
+
                 Battery {
                     anchors.verticalCenter: parent.verticalCenter
                 }
