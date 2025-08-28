@@ -83,7 +83,7 @@ Row {
           }
 
           TextWidget {
-            text: `${SystemStatService.memoryUsageGb}`
+            text: `${SystemStatService.memoryUsageGb}G`
             font.pointSize: Style.fontSizeS * scaling
             font.weight: Style.fontWeightMedium
             anchors.verticalCenter: parent.verticalCenter
