@@ -1,0 +1,5 @@
+[config]
+
+[templates.chicken]
+input_path = "template.json"
+output_path = "~/.local/share/chicken-shell/colors.json"
