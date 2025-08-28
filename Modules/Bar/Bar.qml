@@ -58,6 +58,7 @@ Variants {
                 anchors.verticalCenter: parent.verticalCenter
                 spacing: Style.marginS * scaling
 
+                Workspaces {}
             }
 
             // Right
