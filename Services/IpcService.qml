@@ -17,5 +17,13 @@ Item {
       clipboardPanel.isLoaded = true
     }
   }
+
+  IpcHandler {
+    target: "wallpaper"
+
+    function load() {
+      wallpaperChooser.isLoaded = true
+    }
+  }
   
 }

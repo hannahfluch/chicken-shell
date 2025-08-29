@@ -31,6 +31,7 @@ Singleton {
     signal windowListChanged
     signal monitorListChanged
     signal activeMonitorChanged
+    signal wallpaperChanged
 
     // Compositor detection
     Component.onCompleted: {
@@ -75,6 +76,9 @@ Singleton {
         target: Hyprland
         enabled: isHyprland
         function onRawEvent(event) {
+            if (event.name === "openlayer") {
+                checkWallpaper(event);
+            }
             updateHyprlandWorkspaces();
             workspaceChanged();
             updateHyprlandWindows();
@@ -546,5 +550,16 @@ Singleton {
         } 
         Logger.error("Compositor", "Dynmic monitor configuration is currently only supported for hyprland!")
         return null;
+    }
+
+    function checkWallpaper(event) {
+        if (isHyprland) {
+            const parsed = event.parse(1);
+            if (parsed.includes("hyprpaper") || parsed.includes("swww-daemon")) {
+                wallpaperChanged();
+            }
+            return;
+        }
+        Logger.error("Compositor", "Switching wallpapers is currently only supported for hyprland!")
     }
 }

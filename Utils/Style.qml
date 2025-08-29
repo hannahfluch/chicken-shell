@@ -60,6 +60,7 @@ Singleton {
 
     // Dimensions
     property int barHeight: 28
+    property int wallpaperChooserHeight: barHeight * 8
     property int capsuleHeight: (barHeight * 0.73)
     property int baseWidgetSize: 32
     property int launcherWidgetSize : 27

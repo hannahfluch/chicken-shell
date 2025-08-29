@@ -23,4 +23,5 @@ ShellRoot {
     Clipboard { id: clipboardPanel }
 
     IpcService { }
+    WallpaperChooser { id: wallpaperChooser }
 }
