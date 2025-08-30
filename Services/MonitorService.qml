@@ -20,6 +20,9 @@ Singleton {
     }
     return null;
   }
+  function getFocusedMonitor() {
+    return CompositorService.focusedMonitorIndex === -1 ? null : monitors[CompositorService.focusedMonitorIndex];
+  }
 
   Component.onCompleted: {
     // Connect to CompositorService monitor changes
@@ -44,7 +47,6 @@ Singleton {
     for (var i = 0; i < CompositorService.monitors.length; i++) {
       const m = CompositorService.monitors[i];
       monitors.push(m)
-      print(monitors.length)
     }
   }
 }

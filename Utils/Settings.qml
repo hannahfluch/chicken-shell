@@ -17,8 +17,6 @@ Singleton {
     property string colorFile: dataDir + "colors.json" // colors for bar generated using matugen
     // Used to access via Settings.data.xxx.yyy
     property alias data: adapter
-    // Flag to prevent unnecessary wallpaper calls during reloads
-    property bool isInitialLoad: true
 
     FileView {
         path: dataFile
@@ -30,15 +28,6 @@ Singleton {
         }
         onLoaded: function () {
             Logger.log("Settings", "OnLoaded");
-            Qt.callLater(function () {
-                // Only set wallpaper on initial load, not on reloads
-                // if (isInitialLoad && adapter.wallpaper.current !== "") {
-                //   Logger.log("Settings", "Set current wallpaper", adapter.wallpaper.current)
-                //   WallpaperService.setCurrentWallpaper(adapter.wallpaper.current, true) todo!
-                // }
-
-                isInitialLoad = false;
-            });
         }
         onLoadFailed: function (error) {
             if (error.toString().includes("No such file") || error === 2)

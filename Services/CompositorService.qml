@@ -32,6 +32,7 @@ Singleton {
     signal monitorListChanged
     signal activeMonitorChanged
     signal wallpaperChanged
+    signal wallpaperInitialized
 
     // Compositor detection
     Component.onCompleted: {
@@ -124,6 +125,7 @@ Singleton {
             updateHyprlandWindows();
             updateHyprlandMonitors();
             setupHyprlandConnections();
+            hyprpaper.running = true;
             Logger.log("Compositor", "Hyprland initialized successfully");
         } catch (e) {
             Logger.error("Compositor", "Error initializing Hyprland:", e);
@@ -140,12 +142,12 @@ Singleton {
         try {
             const rawMonitors = Hyprland.monitors.values;
             const monitorsList = [];
-            let focusedMonitorIndex = -1;
+            let focusedIdx = -1;
 
             for (var i = 0; i < rawMonitors.length; i++) {
                 const monitor = rawMonitors[i];
                 if (monitor.focused) {
-                    focusedMonitorIndex = i;
+                    focusedIdx = i;
                 }
                 monitorsList.push({
                     "id": monitor.id || "",
@@ -156,6 +158,7 @@ Singleton {
             }
 
             monitors = monitorsList;
+            focusedMonitorIndex = monitors.length === 1 ? 0 : focusedIdx;
 
             activeMonitorChanged();
         } catch (e) {
@@ -561,5 +564,35 @@ Singleton {
             return;
         }
         Logger.error("Compositor", "Switching wallpapers is currently only supported for hyprland!")
+    }
+
+    // attempts to get the location of the currently active wallpaper by trying different services
+    // todo: swww
+    Process {
+        id: hyprpaper
+        running: false
+        command: ["hyprctl", "hyprpaper", "listactive"]
+        stdout: StdioCollector {}
+        onExited: (code, status) => {
+            const out = stdout.text.trim();
+            if (out === "" || status !== 0) {
+                Logger.error("CompositorService", "unimplemented: SWWW wallpaper check");
+                // swww.running = true
+                return;
+            }
+            const wallpapers = {};
+            out.split("\n").forEach(line => {
+                const parts = line.split("=");
+                if(parts.length === 2) {
+                    const monitor = parts[0].trim();
+                    wallpapers[monitor === "" ? "other" : monitor] = parts[1].trim();
+                } else {
+                    Logger.warn("CompositorService", "Hyprpaper", "Unknown format: ", line)
+                }
+            });
+            WallpaperService.initialWallpapers = wallpapers;
+            // trigger signal
+            wallpaperInitialized();
+        }
     }
 }

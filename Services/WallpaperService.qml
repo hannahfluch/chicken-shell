@@ -14,23 +14,58 @@ Singleton {
     property bool isNiri: false
     property string spec: ""
     property string current: ""
-    property string prev: "placeholder"
+    property string prev: ""
     property var wallpapers: [ ]
-    property string directory: Quickshell.env("WALLPAPER_PATH") 
-    function setWallpaper(name) {
-        Logger.log("Wallpaper", "Setting new...");
-    }
+    property string directory: ""
 
-    Component.onCompleted: {
-        Logger.log("Wallpaper", "Service started");
-        // Connect to CompositorService monitor changes
+    // map of monitor - wallpaper (currently only the main monitors wallpaper is applied)
+    property var initialWallpapers: {} // set by compositor service
+
+    // initialize the wallpaper service
+    function initialize() {
+
+        updateState();
+        root.prev = current.substring(0, current.lastIndexOf(".")) || current
+                
+        // Connect to CompositorService wallpaper changes
         CompositorService.wallpaperChanged.connect(updateColorscheme);
         // Initial sync
         updateColorscheme();
     }
+    function updateState() {
+        const focused = MonitorService.getFocusedMonitor();
+        // try to get focused monitor otherwise fallback to default wallaper for other monitors
+        const path = initialWallpapers[focused ? focused.name : "other"];
+        if(!path) {
+            Logger.error("WallpaperService", "Could not determine initial wallpaper! Aborting service...")
+            return;
+        }
+        const parts = path.split("/");
+        current = parts.pop();
+        directory = parts.join("/") + "/";
+
+        loaderProc.running = true;
+    }
+    Component.onCompleted: {
+        Logger.log("Wallpaper", "Service started");
+        // Connect to CompositorService intial wallpaper detection
+        CompositorService.wallpaperInitialized.connect(initialize);
+    }
+
+    Connections {
+        target: CompositorService
+        function onIsHyprlandChanged() {
+          isHyprland = CompositorService.isHyprland
+        }
+        function onIsNiriChanged() {
+          isNiri = CompositorService.isNiri
+        }
+    }
+
 
     // Update the bars colors (triggered by compositor)
     function updateColorscheme() {
+        Logger.log("WallpaperService", "updating color scheme: ", root.current)
         updateColors.running = true;
     }
     function choose(filename) {
@@ -48,6 +83,7 @@ Singleton {
       return root.directory + name
     }
 
+    // switches wallpapers
     Process {
         id: updater
         running: false
@@ -59,26 +95,29 @@ Singleton {
             if (status !== 0) Logger.error("Could not update wallpaper status: ", status)
             else {
             root.prev = root.spec
+            // load directory of new specialisation
+            updateState();
         }
         }
     }
 
+    // updates the colorscheme using matugen
     Process {
         id: updateColors
         running: false
         command: ["matugen", "image", root.path(root.current), "--config", Quickshell.shellDir + "/Assets/Matugen/matugen.toml"]
     }
-    
+
+    // adds new wallpapers to list
     Process {
         id: loaderProc
-        running: true
+        running: false
         command: ["ls", "-1", root.directory]
         stdout: StdioCollector {
             onStreamFinished: {
             const lines = (text ? text.split("\n") : [])
               .filter(l => l.trim() !== "");
             root.wallpapers = lines;  
-            loaderProc.running = false
             }
         }
     }

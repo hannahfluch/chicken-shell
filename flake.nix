@@ -59,46 +59,40 @@
           };
         in
         {
-          default = pkgs.lib.makeOverridable (
-            {
-              wallpaper_path ? null,
-            }:
-            pkgs.stdenv.mkDerivation {
-              pname = "chicken-shell";
-              version = self.rev or self.dirtyRev or "dirty";
-              src = ./.;
+          default = pkgs.stdenv.mkDerivation {
+            pname = "chicken-shell";
+            version = self.rev or self.dirtyRev or "dirty";
+            src = ./.;
 
-              nativeBuildInputs = [
-                pkgs.gcc
-                pkgs.makeWrapper
-                pkgs.qt6.wrapQtAppsHook
-              ];
-              buildInputs = [
-                qs
-                pkgs.xkeyboard-config
-                pkgs.qt6.qtbase
-              ];
-              propagatedBuildInputs = runtimeDeps;
+            nativeBuildInputs = [
+              pkgs.gcc
+              pkgs.makeWrapper
+              pkgs.qt6.wrapQtAppsHook
+            ];
+            buildInputs = [
+              qs
+              pkgs.xkeyboard-config
+              pkgs.qt6.qtbase
+            ];
+            propagatedBuildInputs = runtimeDeps;
 
-              installPhase = ''
-                mkdir -p $out/share/chicken-shell
-                cp -r ./* $out/share/chicken-shell
+            installPhase = ''
+              mkdir -p $out/share/chicken-shell
+              cp -r ./* $out/share/chicken-shell
 
-                makeWrapper ${qs}/bin/qs $out/bin/chicken-shell \
-                  --prefix PATH : "${pkgs.lib.makeBinPath runtimeDeps}" \
-                  --set FONTCONFIG_FILE "${fontconfig}" \
-                  ${pkgs.lib.optionalString (wallpaper_path != null) "--set WALLPAPER_PATH ${wallpaper_path}"} \
-                  --add-flags "-p $out/share/chicken-shell"
-              '';
+              makeWrapper ${qs}/bin/qs $out/bin/chicken-shell \
+                --prefix PATH : "${pkgs.lib.makeBinPath runtimeDeps}" \
+                --set FONTCONFIG_FILE "${fontconfig}" \
+                --add-flags "-p $out/share/chicken-shell"
+            '';
 
-              meta = {
-                description = "A minimal desktop shell built with Quickshell.";
-                homepage = "https://github.com/hannahfluch/chicken-shell";
-                license = pkgs.lib.licenses.mit;
-                mainProgram = "chicken-shell";
-              };
-            }
-          ) { };
+            meta = {
+              description = "A minimal desktop shell built with Quickshell.";
+              homepage = "https://github.com/hannahfluch/chicken-shell";
+              license = pkgs.lib.licenses.mit;
+              mainProgram = "chicken-shell";
+            };
+          };
         }
       );
 
