@@ -14,7 +14,6 @@ Singleton {
     property bool isNiri: false
     property string spec: ""
     property string current: ""
-    property string prev: ""
     property var wallpapers: [ ]
     property string directory: ""
 
@@ -25,7 +24,6 @@ Singleton {
     function initialize() {
 
         updateState();
-        root.prev = current.substring(0, current.lastIndexOf(".")) || current
                 
         // Connect to CompositorService wallpaper changes
         CompositorService.wallpaperChanged.connect(updateColorscheme);
@@ -71,13 +69,8 @@ Singleton {
     function choose(filename) {
         Logger.log("Wallpaper", "Updating current wallpaper...");
         root.spec = filename.substring(0, filename.lastIndexOf(".")) || filename
-        if (root.spec !== root.prev) {
-            root.current = filename;
-            updater.running = true;
-        }
-        else {
-          Logger.warn("Wallpaper", "User is asking to switch to same wallpaper");
-        }
+        root.current = filename;
+        updater.running = true;
     } 
     function path(name) {
       return root.directory + name
@@ -94,7 +87,6 @@ Singleton {
         onExited: (code, status) => {
             if (status !== 0) Logger.error("Could not update wallpaper status: ", status)
             else {
-            root.prev = root.spec
             // load directory of new specialisation
             updateState();
         }
