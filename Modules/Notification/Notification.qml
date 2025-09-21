@@ -30,14 +30,15 @@ Variants {
         visible: modelData ? (Settings.data.notifications.monitors.includes(modelData.name) || (Settings.data.notifications.monitors.length === 0)) && (NotificationService.notificationModel.count > 0) : false
 
         // Position based on bar location
-        anchors.top: Settings.data.bar.top ? "top" : "bottom"
-        anchors.bottom: !Settings.data.bar.top ? "bottom" : "top"
+        anchors.top: Settings.data.bar.top ? "top" : ""
+        anchors.bottom: !Settings.data.bar.top ? "bottom" : ""
         anchors.right: true
         margins.top: Settings.data.bar.top ? (Style.barHeight + Style.marginM) * scaling : 0
         margins.bottom: !Settings.data.bar.top ? (Style.barHeight + Style.marginM) * scaling : 0
         margins.right: Style.marginM * scaling
         implicitWidth: 360 * scaling
         implicitHeight: Math.min(notificationStack.implicitHeight, (NotificationService.maxVisible * 120) * scaling)
+        Behavior on implicitHeight { NumberAnimation { duration: Style.animationNormal; easing.type: Easing.OutCubic } }
         WlrLayershell.layer: WlrLayer.Overlay
         exclusionMode: ExclusionMode.Ignore
 
@@ -74,24 +75,29 @@ Variants {
                     color: Color.mSurface
 
                     // Animation properties
-                    property real scaleValue: 0.8
                     property real opacityValue: 0.0
                     property bool isRemoving: false
 
                     // Scale and fade-in animation
-                    scale: scaleValue
                     opacity: opacityValue
 
+                    property real ty: 8 * scaling
+                    transform: Translate { y: ty }
+
+                    // recommended: cache during anim to avoid paint artifacts on rounded corners
+                    antialiasing: true
+                    layer.enabled: true
+                    layer.smooth: true
                     // Animate in when the item is created
                     Component.onCompleted: {
-                        scaleValue = 1.0;
+                        ty = 0;
                         opacityValue = 1.0;
                     }
 
                     // Animate out when being removed
                     function animateOut() {
                         isRemoving = true;
-                        scaleValue = 0.8;
+                        ty = -8 * scaling;
                         opacityValue = 0.0;
                     }
 
@@ -114,11 +120,10 @@ Variants {
                     }
 
                     // Animation behaviors
-                    Behavior on scale {
+                    Behavior on ty {
                         NumberAnimation {
-                            duration: Style.animationSlow
-                            easing.type: Easing.OutExpo
-                            // easing.type: Easing.OutBack//   looks better but notification get clipped on all sides
+                            duration: Style.animationFast;
+                            easing.type: Easing.OutQuad
                         }
                     }
 
