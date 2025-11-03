@@ -1,6 +1,7 @@
 // shell.qml
 import Quickshell
 import qs.Modules.Bar
+import qs.Modules.Goose
 import qs.Modules.Panel
 import qs.Modules.Notification
 import qs.Modules.Launcher
@@ -10,6 +11,7 @@ ShellRoot {
     id: shellRoot
 
     Bar {}
+    Goose {}
     Panel {
         id: panel
     }

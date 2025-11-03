@@ -46,6 +46,8 @@ Variants {
                 anchors.verticalCenter: parent.verticalCenter
                 spacing: Style.marginS * scaling
 
+                Goose {}
+
                 SystemMonitor {}
             }
 
