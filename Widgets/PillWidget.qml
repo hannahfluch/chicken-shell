@@ -17,6 +17,7 @@ Item {
     property color collapsedIconColor: Color.mOnSurface
     property real sizeMultiplier: 0.8
     property bool autoHide: false
+    property bool overrideHide: false
 
     signal shown
     signal hidden
@@ -26,7 +27,7 @@ Item {
     signal wheel(int delta)
 
     // Internal state
-    property bool showPill: false
+    property bool showPill: overrideHide
     property bool shouldAnimateHide: false
 
     // Exposed width logic
@@ -161,8 +162,8 @@ Item {
             easing.type: Easing.InCubic
         }
         onStopped: {
-            showPill = false;
-            shouldAnimateHide = false;
+            showPill = overrideHide;
+            shouldAnimateHide = overrideHide;
             root.hidden();
         }
     }
@@ -218,10 +219,12 @@ Item {
     }
 
     function hide() {
-        if (showPill) {
-            hideAnim.start();
+        if (!overrideHide) {
+            if (showPill) {
+                hideAnim.start();
+            }
+            showTimer.stop();
         }
-        showTimer.stop();
     }
 
     function showDelayed() {

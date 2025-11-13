@@ -18,6 +18,7 @@ PillWidget {
     property real percent: testMode ? testPercent : (isReady ? (battery.percentage * 100) : 0)
     property bool charging: testMode ? testCharging : (isReady ? battery.state === UPowerDeviceState.Charging : false)
     property bool show: isReady && percent > 0
+    property bool low: !charging && percent <= 20
 
     // Choose icon based on charge and charging state
     function batteryIcon() {
@@ -51,6 +52,8 @@ PillWidget {
 
     icon: root.batteryIcon()
     text: Math.round(root.percent) + "%"
+    iconCircleColor: low ? Color.mError : Color.mPrimary
+    overrideHide: low
     textColor: charging ? Color.mPrimary : Color.mOnSurface
     tooltipText: {
         let lines = [];
