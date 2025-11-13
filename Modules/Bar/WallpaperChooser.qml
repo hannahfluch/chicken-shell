@@ -140,6 +140,8 @@ LoaderWidget {
                         snapMode: ListView.NoSnap
                         model: WallpaperService.wallpapers
                         focus: true
+                        highlightMoveVelocity: -0.3
+
                         // keyboard navigation
                         Keys.onRightPressed : selectNext()
                         Keys.onLeftPressed: selectPrev()
@@ -174,6 +176,8 @@ LoaderWidget {
                                     fillMode: Image.PreserveAspectCrop
                                     source: WallpaperService.path(thumb.name)
                                     cache: true
+                                    sourceSize.width: width
+                                    sourceSize.height: height
                                 }
 
                                 Behavior on color {
