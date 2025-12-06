@@ -124,14 +124,18 @@ Singleton {
             updateHyprlandWorkspaces();
             updateHyprlandWindows();
             updateHyprlandMonitors();
+            updateHyprlandWallpapers();
             setupHyprlandConnections();
-            hyprpaper.running = true;
             Logger.log("Compositor", "Hyprland initialized successfully");
         } catch (e) {
             Logger.error("Compositor", "Error initializing Hyprland:", e);
             compositorType = "unknown";
             isHyprland = false;
         }
+    }
+
+    function updateHyprlandWallpapers() {
+            hyprpaper.running = true;
     }
 
     function setupHyprlandConnections() {// Connections are set up at the top level, this function just marks that Hyprland is ready
@@ -559,6 +563,7 @@ Singleton {
         if (isHyprland) {
             const parsed = event.parse(1);
             if (parsed.includes("hyprpaper") || parsed.includes("swww-daemon")) {
+                hyprpaper.running = true;
                 wallpaperChanged();
             }
             return;
@@ -586,6 +591,7 @@ Singleton {
                 if(parts.length === 2) {
                     const monitor = parts[0].trim();
                     wallpapers[monitor === "" ? "other" : monitor] = parts[1].trim();
+                    Logger.log("found wallapper", parts[1].trim());
                 } else {
                     Logger.warn("CompositorService", "Hyprpaper", "Unknown format: ", line)
                 }

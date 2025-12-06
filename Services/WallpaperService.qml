@@ -63,6 +63,12 @@ Singleton {
 
     // Update the bars colors (triggered by compositor)
     function updateColorscheme() {
+        const focused = MonitorService.getFocusedMonitor();
+        const path = initialWallpapers[focused ? focused.name : "other"];
+        const parts = path.split("/");
+        current = parts.pop();
+        spec = current.substring(0, current.lastIndexOf(".")) || current
+
         Logger.log("WallpaperService", "updating color scheme: ", root.current)
         updateColors.running = true;
     }
@@ -87,6 +93,7 @@ Singleton {
         onExited: (code, status) => {
             if (status !== 0) Logger.error("Could not update wallpaper status: ", status)
             else {
+            Logger.log("Successfully ran update script for spec: ", root.spec);
             // load directory of new specialisation
             updateState();
         }

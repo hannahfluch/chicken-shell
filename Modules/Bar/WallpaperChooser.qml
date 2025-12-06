@@ -157,6 +157,7 @@ LoaderWidget {
                             property string name: modelData
                             // expose a simple click method so keyboard can trigger it too
                             function click() {
+                                Logger.log("clicked on: ", name);
                                 WallpaperService.choose(name);
                                 wallpaperChooserPanel.hide();
                             }
