@@ -4,7 +4,7 @@ wallpaper="$1"
 activated=0
 
 # Iterate over home-manager generations
-home-manager generations | while IFS= read -r line; do
+tac $XDG_DATA_HOME/hm_generations | while IFS= read -r line; do
   # Extract the first /nix/store/... path from the line
   path="$(grep -oE '/nix/store/[^ ]+' <<<"$line" | head -n1 || true)"
 
